@@ -1,12 +1,14 @@
 import os
 import time
-
+import argparse
 import torch
 from torchvision import transforms
 import numpy as np
 from PIL import Image
 
 from src import UNet
+from src import MobileV3Unet
+from src import VGG16UNet
 
 
 def time_synchronized():
@@ -14,8 +16,21 @@ def time_synchronized():
     return time.time()
 
 
-def main():
-    classes = 1  # exclude background
+def create_model(num_classes, model_flag):
+    if model_flag == 'mobilenet':
+        return MobileV3Unet(num_classes=num_classes, pretrain_backbone=False)
+    if model_flag == 'unet':
+        return UNet(in_channels=3, num_classes=num_classes, base_c=32)
+    if model_flag == 'vgg':
+        return VGG16UNet(num_classes=num_classes, pretrain_backbone=False)
+
+
+parser = argparse.ArgumentParser(description="pytorch unet predict")
+parser.add_argument('--model-flag', default='unet', type=str, help='model class flag')
+
+
+def main(args):
+    num_classes = 2  # exclude background
     weights_path = "./save_weights/best_model.pth"
     img_path = "./DRIVE/test/images/007.jpg"
     assert os.path.exists(weights_path), f"weights {weights_path} not found."
@@ -29,7 +44,7 @@ def main():
     print(f"using {device} device.")
 
     # create model
-    model = UNet(in_channels=3, num_classes=classes+1, base_c=32)
+    model = create_model(num_classes=num_classes, model_flag=args.model_flag)
 
     # load weights
     model.load_state_dict(torch.load(weights_path, map_location='cpu')['model'])
@@ -67,4 +82,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    args = parser.parse_args()
+    main(args)
