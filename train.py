@@ -5,6 +5,9 @@ import datetime
 import torch
 
 from src import UNet
+from src import MobileV3Unet
+from src import VGG16UNet
+
 from train_utils import train_one_epoch, evaluate, create_lr_scheduler
 from my_dataset import DriveDataset
 import transforms as T
@@ -56,9 +59,13 @@ def get_transform(train, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)):
                                                                                                       std=std)
 
 
-def create_model(num_classes):
-    return UNet(in_channels=3, num_classes=num_classes, base_c=32)
-
+def create_model(num_classes, model_flag):
+    if model_flag == 'mobilenet':
+        return MobileV3Unet(num_classes=num_classes, pretrain_backbone=False)
+    if model_flag == 'unet':
+        return UNet(in_channels=3, num_classes=num_classes, base_c=32)
+    if model_flag == 'vgg':
+        return VGG16UNet(num_classes=num_classes, pretrain_backbone=False)
 
 def main(args):  # sourcery no-metrics
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
@@ -95,7 +102,7 @@ def main(args):  # sourcery no-metrics
                                              pin_memory=True,
                                              collate_fn=val_dataset.collate_fn)
 
-    model = create_model(num_classes=num_classes)
+    model = create_model(num_classes=num_classes, model_flag=args.model_flag)
     model.to(device)
 
     params_to_optimize = [p for p in model.parameters() if p.requires_grad]
@@ -173,7 +180,7 @@ def parse_args():
     parser.add_argument("-b", "--batch-size", default=1, type=int)
     parser.add_argument("--epochs", default=10, type=int, metavar="N",
                         help="number of total epochs to train")
-
+    parser.add_argument('--model-flag', default='unet', type=str, help='model class flag')
     parser.add_argument('--lr', default=0.01, type=float, help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                         help='momentum')
