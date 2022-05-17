@@ -27,12 +27,12 @@ def create_model(num_classes, model_flag):
 
 parser = argparse.ArgumentParser(description="pytorch unet predict")
 parser.add_argument('--model-flag', default='unet', type=str, help='model class flag')
-
+parser.add_argument('--test-path', default='./DRIVE/test/images/007.jpg', type=str, help='test image path')
 
 def main(args):
     num_classes = 2  # exclude background
     weights_path = "./save_weights/best_model.pth"
-    img_path = "./DRIVE/test/images/007.jpg"
+    img_path = args.test_path
     assert os.path.exists(weights_path), f"weights {weights_path} not found."
     assert os.path.exists(img_path), f"image {img_path} not found."
 
