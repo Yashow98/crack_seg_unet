@@ -145,12 +145,6 @@ def main(args):  # sourcery no-metrics
                          f"dice coefficient: {dice:.3f}\n"
             f.write(train_info + val_info + "\n\n")
 
-        if args.save_best is True:
-            if best_dice < dice:
-                best_dice = dice
-            else:
-                continue
-
         save_file = {"model": model.state_dict(),
                      "optimizer": optimizer.state_dict(),
                      "lr_scheduler": lr_scheduler.state_dict(),
@@ -159,14 +153,18 @@ def main(args):  # sourcery no-metrics
         if args.amp:
             save_file["scaler"] = scaler.state_dict()
 
-        if args.save_best is True:
-            torch.save(save_file, "save_weights/best_model.pth")
+        if args.save_best:
+            if best_dice < dice:
+                best_dice = dice
+                torch.save(save_file, "save_weights/best_model.pth")
         else:
             torch.save(save_file, f"save_weights/model_{epoch}.pth")
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print(f"training time {total_time_str}")
+    print(f'the best dice is {best_dice}')
+    print('Finished Training')
 
 
 def parse_args():
@@ -177,13 +175,12 @@ def parse_args():
     # exclude background
     parser.add_argument("--num-classes", default=1, type=int)
     parser.add_argument("--device", default="cuda", help="training device")
-    parser.add_argument("-b", "--batch-size", default=1, type=int)
-    parser.add_argument("--epochs", default=10, type=int, metavar="N",
+    parser.add_argument("-b", "--batch-size", default=4, type=int)
+    parser.add_argument("--epochs", default=200, type=int, metavar="N",
                         help="number of total epochs to train")
     parser.add_argument('--model-flag', default='unet', type=str, help='model class flag')
-    parser.add_argument('--lr', default=0.01, type=float, help='initial learning rate')
-    parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
-                        help='momentum')
+    parser.add_argument('--lr', default=0.001, type=float, help='initial learning rate')
+    parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
     parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
                         metavar='W', help='weight decay (default: 1e-4)',
                         dest='weight_decay')
@@ -193,7 +190,7 @@ def parse_args():
                         help='start epoch')
     parser.add_argument('--save-best', default=True, type=bool, help='only save best dice weights')
     # Mixed precision training parameters
-    parser.add_argument("--amp", default=False, type=bool,
+    parser.add_argument("--amp", default=True, type=bool,
                         help="Use torch.cuda.amp for mixed precision training")
 
     return parser.parse_args()
