@@ -127,6 +127,7 @@ def main(args):  # sourcery no-metrics
             scaler.load_state_dict(checkpoint["scaler"])
 
     best_dice = 0.
+    best_mIou = 0.
     start_time = time.time()
     for epoch in range(args.start_epoch, args.epochs):
         mean_loss, lr = train_one_epoch(model, optimizer, train_loader, device, epoch, num_classes,
@@ -134,6 +135,8 @@ def main(args):  # sourcery no-metrics
 
         confmat, dice = evaluate(model, val_loader, device=device, num_classes=num_classes)
         val_info = str(confmat)
+        mIou = val_info.split(':')[-1].strip()
+        mIou = float(mIou)
         print(val_info)
         print(f"dice coefficient: {dice:.3f}")
         # write into txt
@@ -153,6 +156,9 @@ def main(args):  # sourcery no-metrics
         if args.amp:
             save_file["scaler"] = scaler.state_dict()
 
+        if best_mIou < mIou:
+            best_mIou = mIou
+
         if args.save_best:
             if best_dice < dice:
                 best_dice = dice
@@ -163,7 +169,8 @@ def main(args):  # sourcery no-metrics
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print(f"training time {total_time_str}")
-    print(f'the best dice is {best_dice}')
+    print(f'the best mIou is {best_mIou}')
+    print(f'the best dice is {best_dice:3f}')
     print('Finished Training')
 
 
