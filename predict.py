@@ -25,10 +25,6 @@ def create_model(num_classes, model_flag):
         return VGG16UNet(num_classes=num_classes, pretrain_backbone=False)
 
 
-parser = argparse.ArgumentParser(description="pytorch unet predict")
-parser.add_argument('--model-flag', default='unet', type=str, help='model class flag')
-parser.add_argument('--test-path', default='./DRIVE/test/images/007.jpg', type=str, help='test image path')
-
 def main(args):
     num_classes = 2  # exclude background
     weights_path = "./save_weights/best_model.pth"
@@ -81,6 +77,14 @@ def main(args):
         mask.save("test_result.png")
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="pytorch unet predicting")
+    parser.add_argument('--model-flag', default='unet', type=str, help='model class flag')
+    parser.add_argument('--test-path', default='./DRIVE/test/images/007.jpg', type=str, help='test image path')
+
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
-    args = parser.parse_args()
+    args = parse_args()
     main(args)
