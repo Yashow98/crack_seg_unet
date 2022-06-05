@@ -22,11 +22,6 @@
   └── compute_mean_std.py: 统计数据集各通道的均值和标准差
 ```
 
-## DRIVE数据集下载地址：
-* 官网地址： [https://drive.grand-challenge.org/](https://drive.grand-challenge.org/)
-* 百度云链接： [https://pan.baidu.com/s/1Tjkrx2B9FgoJk0KviA-rDw](https://pan.baidu.com/s/1Tjkrx2B9FgoJk0KviA-rDw)  密码: 8no8
-
-
 ## 训练方法
 * 确保提前准备好数据集
 * 若要使用单GPU或者CPU训练，直接使用train.py训练脚本
@@ -38,16 +33,3 @@
 * 在使用训练脚本时，注意要将`--data-path`设置为自己存放`DRIVE`文件夹所在的**根目录**
 * 在使用预测脚本时，要将`weights_path`设置为你自己生成的权重路径。
 * 使用validation文件时，注意确保你的验证集或者测试集中必须包含每个类别的目标，并且使用时只需要修改`--num-classes`、`--data-path`和`--weights`即可，其他代码尽量不要改动
-
-## 使用U-Net在DRIVE数据集上训练得到的权重(仅供测试使用)
-- 链接: https://pan.baidu.com/s/1BOqkEpgt1XRqziyc941Hcw  密码: p50a
-
-## 如果对U-Net网络不了解的可参考我的bilibili
-* [https://www.bilibili.com/video/BV1Vq4y127fB/](https://www.bilibili.com/video/BV1Vq4y127fB/)
-
-
-## 进一步了解该项目，以及对U-Net代码的分析可参考我的bilibili
-* [https://b23.tv/PCJJmqN](https://b23.tv/PCJJmqN)
-
-## 本项目U-Net默认使用双线性插值做为上采样，结构图如下
-![u-net](unet.png)
