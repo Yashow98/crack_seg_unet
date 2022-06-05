@@ -32,8 +32,8 @@ def main(args):
     assert os.path.exists(weights_path), f"weights {weights_path} not found."
     assert os.path.exists(img_path), f"image {img_path} not found."
 
-    mean = (0.709, 0.381, 0.224)
-    std = (0.127, 0.079, 0.043)
+    mean = (0.419, 0.432, 0.447)
+    std = (0.084, 0.082, 0.082)
 
     # get devices
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

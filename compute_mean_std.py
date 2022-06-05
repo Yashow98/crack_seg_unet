@@ -10,12 +10,12 @@ def main():
     assert os.path.exists(img_dir), f"image dir: '{img_dir}' does not exist."
     assert os.path.exists(roi_dir), f"roi dir: '{roi_dir}' does not exist."
 
-    img_name_list = [i for i in os.listdir(img_dir) if i.endswith(".tif")]
+    img_name_list = [i for i in os.listdir(img_dir) if i.endswith(".jpg")]
     cumulative_mean = np.zeros(img_channels)
     cumulative_std = np.zeros(img_channels)
     for img_name in img_name_list:
         img_path = os.path.join(img_dir, img_name)
-        ori_path = os.path.join(roi_dir, img_name.replace(".tif", "_mask.gif"))
+        ori_path = os.path.join(roi_dir, img_name.replace(".jpg", "_label.PNG"))
         img = np.array(Image.open(img_path)) / 255.
         roi_img = np.array(Image.open(ori_path).convert('L'))
 

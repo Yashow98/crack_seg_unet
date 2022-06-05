@@ -74,8 +74,8 @@ def main(args):  # sourcery no-metrics
     num_classes = args.num_classes + 1
 
     # using compute_mean_std.py
-    mean = (0.709, 0.381, 0.224)
-    std = (0.127, 0.079, 0.043)
+    mean = (0.419, 0.432, 0.447)
+    std = (0.084, 0.082, 0.082)
 
     # 用来保存训练以及验证过程中信息
     results_file = f'results{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}.txt'
